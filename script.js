@@ -46,13 +46,24 @@ class Enemy{
     constructor(game){
         this.game = game;
        this.markedForDelation = false;
+       this.frameX;
+       this.maxFrame = 5;
+       this.frameInterval = 100;
+       this.frameTimer = 0;
     }
     update(){
         this.x -= this.vx * deltaTime;
         if(this.x < 0 - this.width) this.markedForDelation = true;
+        if(this.frameTimer > this.frameInterval) {
+            if(this.frameX < this.maxFrame) this.frame++
+            else this.frameX = 0;
+            this.frameTimer = 0;
+        } else {
+            this.frameTimer += deltaTime;
+        }
     }
     draw(ctx){
-        ctx.drawImage(this.image, 0, 0, this.spriteWidth, this.spriteHeight, this.x, this.y, this.width, this.height);
+        ctx.drawImage(this.image, this.frameX * this.spriteWidth, 0, this.spriteWidth, this.spriteHeight, this.x, this.y, this.width, this.height);
     }
 }
 
@@ -112,6 +123,7 @@ class Spider extends Enemy {
     }
     update(deltaTime){
         super.update(deltaTime);
+        if(this.y < 0 - this.height * 2) this.markedForDelation = true;
         this.y += this.vy * deltaTime;
         if(this.y > 200) this.vy *= -1;
     }
